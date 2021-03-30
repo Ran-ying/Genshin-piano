@@ -1,0 +1,29 @@
+img{
+    display: inline;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 50%;
+      margin: 30px;
+}
+ul{
+    text-align: center;
+}
+@keyframes cirAni {
+	0% {
+	width:40px;
+	height:40px;
+    border-color: green;
+	border:1px solid #eee;
+ }
+100% {
+	width:60px;
+	height:60px;
+    border-color: green;
+	border:1px solid #333;
+ }
+}
+.active {
+    animation:cirAni 2s linear infinite;
+}
