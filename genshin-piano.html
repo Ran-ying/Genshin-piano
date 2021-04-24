@@ -4,38 +4,172 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi~</title>
+    <title>Genshin-Piano</title>
 </head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="../genshin-piano/genshin-piano.js"></script>
-<link rel="stylesheet"  type="text/css"  href="../genshin-piano/genshin-piano.css">
+<script src="jquery.min.js"></script>
+<script>
+    var singName = {
+        0 : "do",
+        1 : "re",
+        2 : "mi",
+        3 : "fa",
+        4 : "so",
+        5 : "la",
+        6 : "ti"
+    };
+    var keyCode = {
+        65 : "a",
+        66 : "b",
+        67 : "c",
+        68 : "d",
+        69 : "e",
+        70 : "f",
+        71 : "g",
+        72 : "h",
+        //73 : "i ",
+        74 : "j",
+        //75 : "k ",
+        //76 : "l ",
+        77 : "m",
+        78 : "n",
+        //79 : "o ",
+        //80 : "p ",
+        81 : "q",
+        82 : "r",
+        83 : "s",
+        84 : "t",
+        85 : "u",
+        86 : "v",
+        87 : "w",
+        88 : "x",
+        89 : "y",
+        90 : "z"
+    }
+    var clickCode = {
+        0 : {
+            0 : "q",
+            1 : "w",
+            2 : "e",
+            3 : "r",
+            4 : "t",
+            5 : "y",
+            6 : "u"
+        },
+        1: {
+            0 : "a",
+            1 : "s",
+            2 : "d",
+            3 : "f",
+            4 : "g",
+            5 : "h",
+            6 : "j"
+        },
+        2 : {
+            0 : "z",
+            1 : "x",
+            2 : "c",
+            3 : "v",
+            4 : "b",
+            5 : "n",
+            6 : "m"
+        }
+    }
+    $(function(){
+        for(let i = 0; i<3;i++){
+            for(let o =0;o<7;o++){
+                $("#pianoKeyPanel").append(`<div class="pianoKeyContainer"><div onclick="sing(${i},${o})" class="pianoKey" style="background-image : url('image/${singName[o]}.jpg')"></div><div id="key${clickCode[i][o]}" class="pianoKeyCircle"></div></div>`);
+            }
+        }
+    });
+    function sing(i,o){
+        singMusic(clickCode[i][o]);
+    }
+    $(document).keydown(
+        function(event){
+            if(keyCode[event.keyCode] != undefined){
+                singMusic(keyCode[event.keyCode]);
+            }
+        }
+    )
+    function singMusic(key){
+        console.log(key);
+        keyAnimate(key);
+        let audio = new Audio();
+        audio.src = `audio/${key}.mp3`;
+        audio.play();
+    }
+    let keyAnimateArr = new Array();
+    $(
+        function(){
+            for(let i in keyCode){
+                keyAnimateArr[keyCode[i]] = {
+                    bool : false
+                }
+            }
+        }
+    )
+    function keyAnimate(key){
+        if(!keyAnimateArr[key]["bool"]){
+            keyAnimateArr[key]["bool"] = true;
+        }
+        else{
+            $(`#key${key}`).toggleClass("active");
+        }
+        setTimeout(() => {
+            $(`#key${key}`).toggleClass("active");
+        }, 100);
+    }
+</script>
+<style>
+    body{
+        background-image: url('image/bg.jpg');
+        background-size: cover;
+    }
+    #pianoKeyPanel{
+        width: 850px;
+        position: absolute;
+        left: 50%;
+        bottom: 0px;
+        transform: translate(-50%, -10%);
+    }
+    .pianoKeyContainer{
+        position: relative;
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        justify-content:center;
+        align-items:center;
+    }
+    .pianoKey {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        border: 0px;
+        border-radius: 50%;
+        margin: 10px;
+        background-size: cover;
+    }
+    .pianoKeyCircle {
+        z-index: -10;
+        position: absolute;
+        top: 0px;
+        width:92px;
+        height:92px;
+        border: 4px solid #000;
+        border-radius: 50%;
+        opacity: 0;
+    }
+    .active {
+        animation:pianoKeyDown 1.5s ease-out 1;
+    }
+    @keyframes pianoKeyDown{
+        0%  { transform: scale(1);   opacity: 0;  }
+        50% { transform: scale(1.4); opacity: 1;   }
+        100% {  transform: scale(1.4); opacity: 0;  }
+    }
+</style>
 <body>
-    <ul>
-        <img src="../genshin-piano/image/images.jpg" onclick="play(1)" id="1">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-    </ul>
-    <ul>
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-    </ul>
-    <ul>
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-        <img src="../genshin-piano/image/images.jpg">
-    </ul>
+    <div id="pianoKeyPanel"></div>
 </body>
 </html>
