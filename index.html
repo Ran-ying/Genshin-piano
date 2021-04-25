@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,138 +10,187 @@
 <script src="jquery.min.js"></script>
 <script>
     var singName = {
-        0 : "do",
-        1 : "re",
-        2 : "mi",
-        3 : "fa",
-        4 : "so",
-        5 : "la",
-        6 : "ti"
+        0: "do",
+        1: "re",
+        2: "mi",
+        3: "fa",
+        4: "so",
+        5: "la",
+        6: "ti"
     };
     var keyCode = {
-        65 : "a",
-        66 : "b",
-        67 : "c",
-        68 : "d",
-        69 : "e",
-        70 : "f",
-        71 : "g",
-        72 : "h",
+        65: "a",
+        66: "b",
+        67: "c",
+        68: "d",
+        69: "e",
+        70: "f",
+        71: "g",
+        72: "h",
         //73 : "i ",
-        74 : "j",
+        74: "j",
         //75 : "k ",
         //76 : "l ",
-        77 : "m",
-        78 : "n",
+        77: "m",
+        78: "n",
         //79 : "o ",
         //80 : "p ",
-        81 : "q",
-        82 : "r",
-        83 : "s",
-        84 : "t",
-        85 : "u",
-        86 : "v",
-        87 : "w",
-        88 : "x",
-        89 : "y",
-        90 : "z"
+        81: "q",
+        82: "r",
+        83: "s",
+        84: "t",
+        85: "u",
+        86: "v",
+        87: "w",
+        88: "x",
+        89: "y",
+        90: "z"
     }
     var clickCode = {
-        0 : {
-            0 : "q",
-            1 : "w",
-            2 : "e",
-            3 : "r",
-            4 : "t",
-            5 : "y",
-            6 : "u"
+        0: {
+            0: "q",
+            1: "w",
+            2: "e",
+            3: "r",
+            4: "t",
+            5: "y",
+            6: "u"
         },
         1: {
-            0 : "a",
-            1 : "s",
-            2 : "d",
-            3 : "f",
-            4 : "g",
-            5 : "h",
-            6 : "j"
+            0: "a",
+            1: "s",
+            2: "d",
+            3: "f",
+            4: "g",
+            5: "h",
+            6: "j"
         },
-        2 : {
-            0 : "z",
-            1 : "x",
-            2 : "c",
-            3 : "v",
-            4 : "b",
-            5 : "n",
-            6 : "m"
+        2: {
+            0: "z",
+            1: "x",
+            2: "c",
+            3: "v",
+            4: "b",
+            5: "n",
+            6: "m"
         }
     }
-    $(function(){
-        for(let i = 0; i<3;i++){
-            for(let o =0;o<7;o++){
-                $("#pianoKeyPanel").append(`<div class="pianoKeyContainer"><div onclick="sing(${i},${o})" class="pianoKey" style="background-image : url('image/${singName[o]}.jpg')"></div><div id="key${clickCode[i][o]}" class="pianoKeyCircle"></div></div>`);
+    $(() => {
+        for (let i = 0; i < 3; i++) {
+            for (let o = 0; o < 7; o++) {
+                $("#pianoKeyPanel").append(
+                    `<div class="pianoKeyContainer">
+                        <div id="key${clickCode[i][o]}" onclick="sing(${i},${o})" class="pianoKey" style="background-image : url('image/${singName[o]}.jpg')"></div>
+                        <div id="circle${clickCode[i][o]}" class="pianoKeyCircle"></div>
+                    </div>`);
             }
         }
     });
-    function sing(i,o){
-        singMusic(clickCode[i][o]);
-    }
-    $(document).keydown(
-        function(event){
-            if(keyCode[event.keyCode] != undefined){
-                singMusic(keyCode[event.keyCode]);
-            }
-        }
-    )
-    function singMusic(key){
-        console.log(key);
-        keyAnimate(key);
-        let audio = new Audio();
-        audio.src = `audio/${key}.mp3`;
-        audio.play();
-    }
     let keyAnimateArr = new Array();
     $(
-        function(){
-            for(let i in keyCode){
+        () => {
+            for (let i in keyCode) {
                 keyAnimateArr[keyCode[i]] = {
-                    bool : false
+                    bool: false
                 }
             }
         }
     )
-    function keyAnimate(key){
-        if(!keyAnimateArr[key]["bool"]){
+    let clock;
+    $(() => {
+        $("#ReadSheetButton").click(
+            () => {
+                clearInterval(clock);
+                let temp = $("#musicSheet").val().split('');
+                let event = new Array();
+                let index = 0;
+                for (let i in temp) {
+                    let key = temp[i].toLowerCase().replace(" ", "-");
+                    var pattern = new RegExp("[a-z]");
+                    if (pattern.test(key) || key == "-") {
+                        event[index++] = key;
+                    }
+                    else if (key == "\n") {
+                        event[index++] = "-";
+                        event[index++] = "-";
+                    }
+                }
+                console.log(event);
+                let i = 0;
+                clock = setInterval(() => {
+                    singMusic(event[i++]);
+                    if (i == event.length) {
+                        clearInterval(clock);
+                    }
+                }, 250);
+
+                $("#pianoReadSheet").toggle();
+                ReadSheet = !ReadSheet;
+            }
+        )
+    });
+    function sing(i, o) {
+        singMusic(clickCode[i][o]);
+    }
+    var ReadSheet = false;
+    $(document).keydown(
+        (event) => {
+            if (keyCode[event.keyCode] != undefined && !ReadSheet) {
+                singMusic(keyCode[event.keyCode]);
+            }
+            else if (event.keyCode == 80) {
+                $("#pianoReadSheet").toggle();
+                ReadSheet = !ReadSheet;
+            }
+        }
+    )
+    function singMusic(key) {
+        console.log(key);
+        if (key != "-") {
+            keyAnimate(key);
+            let audio = new Audio();
+            audio.src = `audio/${key}.mp3`;
+            audio.play();
+        }
+    }
+    function keyAnimate(key) {
+        if (!keyAnimateArr[key]["bool"]) {
             keyAnimateArr[key]["bool"] = true;
         }
-        else{
-            $(`#key${key}`).toggleClass("active");
+        else {
+            $(`#circle${key}`).toggleClass("pianoKeyCircleActive");
+            $(`#key${key}`).toggleClass("pianoKeyDownActive");
         }
         setTimeout(() => {
-            $(`#key${key}`).toggleClass("active");
+            $(`#circle${key}`).toggleClass("pianoKeyCircleActive");
+            $(`#key${key}`).toggleClass("pianoKeyDownActive");
         }, 100);
     }
 </script>
 <style>
-    body{
+    body {
         background-image: url('image/bg.jpg');
         background-size: cover;
     }
-    #pianoKeyPanel{
+
+    #pianoKeyPanel {
         width: 850px;
         position: absolute;
         left: 50%;
         bottom: 0px;
         transform: translate(-50%, -10%);
     }
-    .pianoKeyContainer{
+
+    .pianoKeyContainer {
         position: relative;
         display: inline-block;
         width: 100px;
         height: 100px;
         margin: 10px;
-        justify-content:center;
-        align-items:center;
+        justify-content: center;
+        align-items: center;
     }
+
     .pianoKey {
         display: inline-block;
         width: 80px;
@@ -150,26 +200,108 @@
         margin: 10px;
         background-size: cover;
     }
+
     .pianoKeyCircle {
         z-index: -10;
         position: absolute;
         top: 0px;
-        width:92px;
-        height:92px;
+        width: 92px;
+        height: 92px;
         border: 4px solid #000;
         border-radius: 50%;
         opacity: 0;
     }
-    .active {
-        animation:pianoKeyDown 1.5s ease-out 1;
+
+    .pianoKeyCircleActive {
+        animation: pianoKeyCircleAnimation 1.5s ease-out 1;
     }
-    @keyframes pianoKeyDown{
-        0%  { transform: scale(1);   opacity: 0;  }
-        50% { transform: scale(1.4); opacity: 1;   }
-        100% {  transform: scale(1.4); opacity: 0;  }
+
+    @keyframes pianoKeyCircleAnimation {
+        0% {
+            transform: scale(1);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1.4);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(1.4);
+            opacity: 0;
+        }
+    }
+
+    .pianoKeyDownActive {
+        animation: pianoKeyDownAnimation 0.5s ease-out 1;
+    }
+
+    @keyframes pianoKeyDownAnimation {
+        0% {
+            transform: scale(1);
+            filter: none;
+        }
+
+        50% {
+            transform: scale(0.9);
+            filter: brightness(80%);
+        }
+
+        100% {
+            transform: scale(1);
+            filter: none;
+        }
+    }
+
+    #pianoReadSheet {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 10%);
+        width: 900px;
+        height: 600px;
+        z-index: 10;
+        display: none;
+        border: 2px solid black;
+        border-radius: 50px;
+        background-color: aliceblue;
+    }
+
+    #pianoReadSheet>div {
+        width: 800px;
+        margin: 20px auto;
+        text-align: center;
+        font-size: xx-large;
+    }
+
+    #musicSheet {
+        width: 100%;
+        height: 400px;
+        border: 2px solid black;
+        border-radius: 3px;
+    }
+
+    #ReadSheetButton {
+        width: 100%;
+        height: 50px;
+        border: 2px solid black;
+        border-radius: 3px;
+        cursor: pointer;
+        user-select: none;
     }
 </style>
+
 <body>
+    <div id="pianoReadSheet">
+        <div>乐谱读取</div>
+        <div>
+            <textarea id="musicSheet"></textarea>
+        </div>
+        <div>
+            <div id="ReadSheetButton">读取</div>
+        </div>
+    </div>
     <div id="pianoKeyPanel"></div>
 </body>
+
 </html>
