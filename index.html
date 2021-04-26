@@ -106,29 +106,41 @@ naassddghgd s
 naassddn b
 naassdddghgd s
 sdn sdn bn`;
-    function settingSheet () {
+    function settingSheet (readInput) {
         clearInterval(clock);
-        if($("#settingValue").val()!=undefined){
+        if(readInput){
             musicSheet = $("#settingValue").val();
         }
         let temp = musicSheet.split('');
         let event = new Array();
         let index = 0;
-        for (let i in temp) {
+        for (let i =0;i<temp.length;i++) {
             let key = temp[i].toLowerCase().replace(" ", "-");
+            let realKey = "";
             var pattern = new RegExp("[a-z]");
             if (pattern.test(key) || key == "-") {
-                event[index++] = key;
+                realKey = key;
+            }
+            else if(key=="\("){
+                while(++i<temp.length&&temp[i]!="\)"){
+                    console.log(i);
+                    if(pattern.test(temp[i].toLowerCase()))
+                        realKey += temp[i].toLowerCase();
+                }
             }
             else if (key == "\n") {
-                event[index++] = "-";
-                event[index++] = "-";
+                realKey = "--";
             }
+            event[index++] = realKey;
         }
         console.log(event);
         let i = 0;
         clock = setInterval(() => {
-            singMusic(event[i++]);
+            let temp = event[i].split('');
+            for(let x in temp){
+                singMusic(temp[x]);
+            }
+            i++;
             if (i == event.length) {
                 clearInterval(clock);
             }
@@ -139,7 +151,7 @@ sdn sdn bn`;
     function settingSpeed () {
         speed = parseInt($("#settingValue").val());
         clearInterval(clock);
-        settingSheet();
+        settingSheet(false);
         panel = "";
         settingMode = false;
         $("#setting").hide();
@@ -196,7 +208,7 @@ sdn sdn bn`;
             <textarea id="settingValue"></textarea>
         </div>
         <div>
-            <div id="settingButton" onclick="setting${element}()">${buttonName}</div>
+            <div id="settingButton" onclick="setting${element}(${element=="Sheet"?"true":""})">${buttonName}</div>
         </div>`);
         $("#settingValue").val(element=="Sheet"?musicSheet:speed);
     }
