@@ -75,6 +75,7 @@
             6: "m"
         }
     }
+    var audio = {};
     $(() => {
         for (let i = 0; i < 3; i++) {
             for (let o = 0; o < 7; o++) {
@@ -83,11 +84,8 @@
                         <div id="key${clickCode[i][o]}" onclick="sing(${i},${o})" class="pianoKey" style="background-image : url('image/${singName[o]}.jpg')"></div>
                         <div id="circle${clickCode[i][o]}" class="pianoKeyCircle"></div>
                     </div>`);
-                var preloadLink = document.createElement("link");
-                preloadLink.href = `audio/${clickCode[i][o]}.mp3`;
-                preloadLink.rel = "prefetch";
-                preloadLink.as = "audio";
-                document.head.appendChild(preloadLink);
+                audio[clickCode[i][o]] = new Audio();
+                audio[clickCode[i][o]].src = `audio/${clickCode[i][o]}.mp3`;
             }
         }
     });
