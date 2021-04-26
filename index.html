@@ -179,9 +179,9 @@ sdn sdn bn`;
         console.log(key);
         if (key != "-") {
             keyAnimate(key);
-            let audio = new Audio();
-            audio.src = `audio/${key}.mp3`;
-            audio.play();
+            let music = new Audio();
+            music.src = audio[key].src;
+            music.play();
         }
     }
     var panel = "";
