@@ -8,6 +8,7 @@
     <title>Genshin-Piano</title>
 </head>
 <script src="jquery.min.js"></script>
+<script src="https://unpkg.com/@tonejs/midi"></script>
 <script>
     var singName = {
         0: "do",
@@ -228,7 +229,9 @@ sdn sdn bn`;
             $(`#key${key}`).toggleClass("pianoKeyDownActive");
         }, 100);
     }
+
 </script>
+
 <style>
     body {
         background-image: url('image/bg.jpg');
@@ -351,11 +354,44 @@ sdn sdn bn`;
         cursor: pointer;
         user-select: none;
     }
+    #FileDrop {
+        width: 200px;
+        margin:0 auto;
+        position: relative;
+    }
 </style>
 
 <body>
     <div id="setting"></div>
     <div id="pianoKeyPanel"></div>
+    <div id="FileDrop"><input type="file" accept="audio/midi"></div>
 </body>
+<script>
+    //Midi Part
+    document.querySelector("input")
+            .addEventListener("change",(e)=> {
+            //get the file
+            const files = e.target.files;
+            if (files.length>0){
+                const file = files[0];
+                document.querySelector("#FileDrop").textContent = file.name; //改成Midi的文件名
+                //read file
+                const reader = new FileReader();
 
+                reader.onload =  (e) => {
+                    const midi = new Midi(e.target.result); //midi file
+
+                    midi.tracks.forEach(track =>{
+                        const notes = track.notes;
+
+                        notes.forEach(note =>{  //循环每一个note,音节是node.name =>比如C#5
+                            console.log(note.name); //在console打印每一个note.name
+                        })
+                    });
+                    // xxx = JSON.stringify(midi,undefined,2); 如果需要JSON文件
+                }
+                reader.readAsArrayBuffer(file)  //read the file
+            }
+        })
+</script>
 </html>
